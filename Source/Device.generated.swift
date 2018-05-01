@@ -42,7 +42,7 @@ import UIKit
 ///         showError()
 ///     }
 ///
-public enum Device {
+public enum Device: Hashable {
   #if os(iOS)
     /// Device is an [iPod Touch (5th generation)](https://support.apple.com/kb/SP657)
     ///
@@ -202,6 +202,46 @@ public enum Device {
     self = Device.mapToDevice(identifier: Device.identifier)
   }
 
+  public var hashValue: Int {
+    switch self {
+      case .iPodTouch5: return 1
+      case .iPodTouch6: return 2
+      case .iPhone4: return 3
+      case .iPhone4s: return 4
+      case .iPhone5: return 5
+      case .iPhone5c: return 6
+      case .iPhone5s: return 7
+      case .iPhone6: return 8
+      case .iPhone6Plus: return 9
+      case .iPhone6s: return 10
+      case .iPhone6sPlus: return 11
+      case .iPhone7: return 12
+      case .iPhone7Plus: return 13
+      case .iPhoneSE: return 14
+      case .iPhone8: return 15
+      case .iPhone8Plus: return 16
+      case .iPhoneX: return 17
+      case .iPad2: return 18
+      case .iPad3: return 19
+      case .iPad4: return 20
+      case .iPadAir: return 21
+      case .iPadAir2: return 22
+      case .iPad5: return 23
+      case .iPad6: return 24
+      case .iPadMini: return 25
+      case .iPadMini2: return 26
+      case .iPadMini3: return 27
+      case .iPadMini4: return 28
+      case .iPadPro9Inch: return 29
+      case .iPadPro12Inch: return 30
+      case .iPadPro12Inch2: return 31
+      case .iPadPro10Inch: return 32
+      case .homePod: return 33
+      case .simulator(let model): return model.hashValue
+      case .unknown: return -1
+    }
+  }
+
   /// Gets the identifier from the system, such as "iPhone7,1".
   public static var identifier: String {
     var systemInfo = utsname()
@@ -271,53 +311,53 @@ public enum Device {
 
   #if os(iOS)
     /// All iPods
-    public static var allPods: [Device] {
+    public static var allPods: Set<Device> {
       return [.iPodTouch5, .iPodTouch6]
     }
 
     /// All iPhones
-    public static var allPhones: [Device] {
+    public static var allPhones: Set<Device> {
        return [.iPhone4, .iPhone4s, .iPhone5, .iPhone5c, .iPhone5s, .iPhone6, .iPhone6Plus, .iPhone6s, .iPhone6sPlus, .iPhone7, .iPhone7Plus, .iPhoneSE, .iPhone8, .iPhone8Plus, .iPhoneX]
     }
 
     /// All iPads
-    public static var allPads: [Device] {
+    public static var allPads: Set<Device> {
        return [.iPad2, .iPad3, .iPad4, .iPadAir, .iPadAir2, .iPad5, .iPad6, .iPadMini, .iPadMini2, .iPadMini3, .iPadMini4, .iPadPro9Inch, .iPadPro12Inch, .iPadPro12Inch2, .iPadPro10Inch]
     }
 
     /// All Plus-Sized Devices
-    public static var allPlusSizedDevices: [Device] {
+    public static var allPlusSizedDevices: Set<Device> {
       return [.iPhone6Plus, .iPhone6sPlus, .iPhone7Plus, .iPhone8Plus]
     }
 
     /// All Pro Devices
-    public static var allProDevices: [Device] {
+    public static var allProDevices: Set<Device> {
       return [.iPadPro9Inch, .iPadPro12Inch, .iPadPro12Inch2, .iPadPro10Inch]
     }
 
     /// All simulator iPods
-    public static var allSimulatorPods: [Device] {
-      return allPods.map(Device.simulator)
+    public static var allSimulatorPods: Set<Device> {
+      return Set(allPods.map(Device.simulator))
     }
 
     /// All simulator iPhones
-    public static var allSimulatorPhones: [Device] {
-      return allPhones.map(Device.simulator)
+    public static var allSimulatorPhones: Set<Device> {
+      return Set(allPhones.map(Device.simulator))
     }
 
     /// All simulator iPads
-    public static var allSimulatorPads: [Device] {
-      return allPads.map(Device.simulator)
+    public static var allSimulatorPads: Set<Device> {
+      return Set(allPads.map(Device.simulator))
     }
 
    /// All simulator Plus-Sized Devices
-   public static var allSimulatorPlusSizedDevices: [Device] {
-     return allPlusSizedDevices.map(Device.simulator)
+   public static var allSimulatorPlusSizedDevices: Set<Device> {
+     return Set(allPlusSizedDevices.map(Device.simulator))
    }
 
    /// All simulator Pro Devices
-   public static var allSimulatorProDevices: [Device] {
-     return allProDevices.map(Device.simulator)
+   public static var allSimulatorProDevices: Set<Device> {
+     return Set(allProDevices.map(Device.simulator))
    }
 
    /// Returns whether the device is an iPod (real or simulator)
@@ -435,28 +475,28 @@ public enum Device {
     }
   #elseif os(tvOS)
     /// All TVs
-    public static var allTVs: [Device] {
+    public static var allTVs: Set<Device> {
        return [.appleTV4, .appleTV4K]
     }
 
     /// All simulator TVs
-    public static var allSimulatorTVs: [Device] {
-      return allTVs.map(Device.simulator)
+    public static var allSimulatorTVs: Set<Device> {
+      return Set(allTVs.map(Device.simulator))
     }
   #endif
 
   /// All real devices (i.e. all devices except for all simulators)
-  public static var allRealDevices: [Device] {
+  public static var allRealDevices: Set<Device> {
     #if os(iOS)
-      return allPods + allPhones + allPads
+      return allPods.union(allPhones).union(allPads)
     #elseif os(tvOS)
       return allTVs
     #endif
   }
 
   /// All simulators
-  public static var allSimulators: [Device] {
-    return allRealDevices.map(Device.simulator)
+  public static var allSimulators: Set<Device> {
+    return Set(allRealDevices.map(Device.simulator))
   }
 
   /**
@@ -488,7 +528,7 @@ public enum Device {
 
    - returns: Returns whether the current device is one of the passed in ones.
    */
-  public func isOneOf(_ devices: [Device]) -> Bool {
+  public func isOneOf(_ devices: Set<Device>) -> Bool {
     return devices.contains(self)
   }
 
