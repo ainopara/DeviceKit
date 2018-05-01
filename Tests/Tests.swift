@@ -381,6 +381,26 @@ class DeviceKitTests: XCTestCase {
     XCTAssertFalse(UIDevice.current.isBatteryMonitoringEnabled)
   }
 
+  func testPerformanceiPadCheck() {
+    let device = Device()
+
+    self.measure {
+      for _ in 0...10000 {
+        _ = device.isPad
+      }
+    }
+  }
+
+  func testPerformanceiPodCheck() {
+    let device = Device()
+
+    self.measure {
+      for _ in 0...10000 {
+        _ = device.isPod
+      }
+    }
+  }
+
   // MARK: - volumes
   @available(iOS 11.0, *)
   func testVolumeTotalCapacity() {
