@@ -223,10 +223,6 @@ class DeviceKitTests: XCTestCase {
     XCTAssertEqual(Device.unknown("Not a device.").description, "Not a device.")
   }
 
-  func testIsPad() {
-    Device.allPads.forEach { XCTAssertTrue($0.isPad) }
-  }
-
    /// Test that all the ppi values for applicable devices match the public information available at wikipedia. Test non-applicable devices return nil.
   func testPPI() {
     // Devices
